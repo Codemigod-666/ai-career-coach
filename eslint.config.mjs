@@ -13,23 +13,51 @@
 
 // export default eslintConfig;
 
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import { fixupConfigRules } from "@eslint/compat";
+import typescriptParser from "@typescript-eslint/parser";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
 });
 
-const eslintConfig = {
-  ...compat.extends("next/core-web-vitals"),
-  parserOptions: {
-    ecmaVersion: 2020, // ensure this is set properly
-    sourceType: "module",
+// Base Next.js config with TypeScript support
+const nextConfig = fixupConfigRules(
+  compat.extends("next/core-web-vitals")
+);
+
+// TypeScript-specific configuration
+const javaScriptConfig = {
+  files: ["**/*.js", "**/*.jsx"],
+  languageOptions: {
+    parser: typescriptParser,
+    parserOptions: {
+      project: "./jsconfig.json",
+      jsconfigRootDir: __dirname,
+      warnOnUnsupportedTypeScriptVersion: false
+    }
+  },
+  settings: {
+    "import/resolver": {
+      typescript: {
+        project: "./jsconfig.json",
+      },
+    },
   },
 };
 
-export default eslintConfig;
+export default [
+  ...nextConfig,
+  javaScriptConfig,
+  {
+    ignores: [".next/**", "node_modules/**", "dist/**"],
+  },
+  // Add custom rules/overrides here
+];

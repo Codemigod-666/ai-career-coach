@@ -70,7 +70,7 @@ export default function ResumeBuilder({ initialContent }) {
             const newContent = getCombinedContent();
             setPreviewContent(newContent ? newContent : initialContent);
         }
-    }, [formValues, activeTab]);
+    }, [formValues, activeTab, initialContent]);
 
     // Handle save result
     useEffect(() => {

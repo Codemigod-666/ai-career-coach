@@ -1,10 +1,9 @@
 import React from 'react'
 
-const CoverLetter = async ({ params }) => {
-    const id = await params.id;
+const CoverLetter = async () => {
 
     return (
-        <div>CoverLetter id: {id}</div>
+        <div>CoverLetter id: new</div>
     )
 }
 
